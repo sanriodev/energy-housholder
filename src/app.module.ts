@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { ModbusReaderModule } from './modules/modbus-reader/modbus-reader.module';
 
 @Module({
-  imports: [],
+  imports: [ModbusReaderModule],
   controllers: [AppController],
   providers: [AppService],
 })
