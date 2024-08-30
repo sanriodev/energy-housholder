@@ -17,7 +17,7 @@ jobs:
           script_stop: true
           script: |
             echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
-            cd bingusboingus
+            cd energy-householder
             docker compose pull
             docker compose up -d
 
