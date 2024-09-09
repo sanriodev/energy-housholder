@@ -17,7 +17,7 @@ async function bootstrap() {
   bootstrapSwagger(app, appConfig);
 
   await app.startAllMicroservices();
-  await app.listen(appConfig.appPort);
+  await app.listen(appConfig.appPort ?? 3000);
 }
 
 async function bootstrapSwagger(
