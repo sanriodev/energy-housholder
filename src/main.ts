@@ -12,7 +12,7 @@ async function bootstrap() {
 
   const appConfig: AppConfigService = app.get(AppConfigService);
 
-  app.setGlobalPrefix(appConfig.get('api/v1'));
+  app.setGlobalPrefix('api/v1');
   app.useGlobalInterceptors(app.get(Reflector));
   bootstrapSwagger(app, appConfig);
 
