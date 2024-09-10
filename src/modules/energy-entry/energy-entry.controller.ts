@@ -1,13 +1,11 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Get,
   Inject,
   Param,
   Post,
   Put,
-  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -27,7 +25,6 @@ export class EnergyEntryController {
   ) {}
 
   @Post('/')
-  @UseInterceptors(ClassSerializerInterceptor)
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
   @ApiOperation({
     summary: 'create enery entry',
@@ -38,7 +35,6 @@ export class EnergyEntryController {
   }
 
   @Put('/')
-  @UseInterceptors(ClassSerializerInterceptor)
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
   @ApiOperation({
     summary: 'update enery entry',
@@ -49,7 +45,6 @@ export class EnergyEntryController {
   }
 
   @Get('/')
-  @UseInterceptors(ClassSerializerInterceptor)
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
   @ApiOperation({
     summary: 'get all data',
@@ -68,7 +63,6 @@ export class EnergyEntryController {
     required: true,
     format: 'string',
   })
-  @UseInterceptors(ClassSerializerInterceptor)
   @UsePipes(new ValidationPipe({ transform: true, whitelist: true }))
   @ApiOperation({
     summary: 'get data by id',
