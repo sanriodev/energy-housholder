@@ -62,7 +62,7 @@ export class EnergyEntryService {
 
   async getAll(): Promise<EnergyEntryDocument[]> {
     try {
-      return await this.energyEntryModel.find();
+      return await this.energyEntryModel.find().sort({ occuredAt: 1 });
     } catch (error) {
       throw new UnprocessableEntityException(error);
     }
