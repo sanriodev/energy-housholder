@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { ModbusReaderService } from './modbus-reader.service';
-import { ModbusReaderController } from './modbus-reader.controller';
+import { ModbusReaderService } from './modbus-reder.service';
+import { EnergyEntryModule } from '../energy-entry/energy-entry.module';
 
 @Module({
-  imports: [], // Add any imported modules here
-  controllers: [ModbusReaderController], // Add any controllers here
+  imports: [EnergyEntryModule], // Add any imported modules here
+  controllers: [], // Add any controllers here
   providers: [ModbusReaderService],
   exports: [ModbusReaderService], // Add any providers (services) here
 })

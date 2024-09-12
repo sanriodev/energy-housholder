@@ -1,107 +1,53 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
-import {
-  BadRequestException,
-  INestApplication,
-  Logger,
-  ValidationPipe,
-} from '@nestjs/common';
-import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { NestFactory, Reflector } from '@nestjs/core';
+import { INestApplication, Logger } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { ErrorFilter } from './common/filters/error.filter';
 import { AppConfigService } from './config/config.service';
-
-process.env.TZ = 'UTC';
+import { ErrorFilter } from './common/filters/error.filter';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
-  let app: INestApplication;
-  if (process.env.node_env == 'production') {
-    app = await NestFactory.create(AppModule, {
-      cors: true,
-    });
-  } else {
-    // repl for debugging!
-    app = await NestFactory.create(AppModule, {
-      cors: true,
-    });
-  }
-  const globalPrefix = 'api';
-  app.setGlobalPrefix(globalPrefix);
-  app.enableVersioning();
+  const app = await NestFactory.create(AppModule, {
+    cors: true,
+    logger: ['log', 'error', 'warn', 'debug', 'verbose'],
+  });
+
+  const appConfig: AppConfigService = app.get(AppConfigService);
+
+  app.setGlobalPrefix('api/v1');
   app.useGlobalFilters(new ErrorFilter());
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      exceptionFactory: (errors) => {
-        const flatMessages: { p: string; msg: string }[] = [].concat(
-          errors.map((e) => ({
-            p: e.property,
-            msg: generateErrorMessage(e),
-          })),
-        );
-        return new BadRequestException({
-          message: 'Bad Request',
-          displayMessage: flatMessages.map((fm) => `${fm.msg}`).join('<br/>'),
-        });
-      },
-    }),
-  );
-
-  const appConfig = app.get(AppConfigService);
-
   app.useGlobalInterceptors(app.get(Reflector));
   bootstrapSwagger(app, appConfig);
+  await app.startAllMicroservices();
 
-  const port = appConfig.appPort || 3000;
-  await app.listen(port);
+  await app.listen(appConfig.appPort);
   Logger.log(
-    `🚀 Application is running on: http://localhost:${port}/${globalPrefix}`,
+    `🚀 Energy-householding server running on http://localhost:${appConfig.appPort}/api/v1 🚀`,
   );
-}
-
-function generateErrorMessage(e): string {
-  let ret = '';
-  ret += e.constraints ? Object.values(e.constraints).join('<br/>') : '';
-  if (e.children) {
-    (e.children as any[]).forEach((child, i) => {
-      if (e.constraints || i > 0) ret += '<br/>';
-      ret += generateErrorMessage(child);
-    });
-  }
-  return ret;
 }
 
 async function bootstrapSwagger(
   app: INestApplication,
   appConfig: AppConfigService,
 ) {
-  const port = appConfig.appPort || 3000;
-  const url: string = `localhost:${port}`;
   const config = new DocumentBuilder()
-    .setTitle('Modbus Api')
-    .setDescription('The Modbus Reader REST Api description')
+    .setTitle('energy-householder API')
+    .setDescription('BingusBoingus REST API Documentation')
     .setVersion('1.0')
     .setBasePath('api/v1')
-    .addBearerAuth()
-    .addServer(url, 'Default Ingress')
     .build();
 
   const document = SwaggerModule.createDocument(app, config, {
-    ignoreGlobalPrefix: true,
+    ignoreGlobalPrefix: false,
   });
 
   SwaggerModule.setup('api/v1/doc', app, document, {
-    swaggerOptions: {
-      persistAuthorization: true,
-      urls: [url],
-    },
     customSiteTitle: 'API Docs',
     explorer: true,
   } as unknown as any);
+  Logger.log(
+    `🚀 Swagger API Documentation is available at http://localhost:${appConfig.appPort}/api/v1/doc 🚀`,
+  );
 }
 
 bootstrap();
