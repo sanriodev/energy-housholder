@@ -32,7 +32,7 @@ async function bootstrapSwagger(
 ) {
   const config = new DocumentBuilder()
     .setTitle('energy-householder API')
-    .setDescription('BingusBoingus REST API Documentation')
+    .setDescription('© 2024 Matteo Juen.')
     .setVersion('1.0')
     .setBasePath('api/v1')
     .build();
