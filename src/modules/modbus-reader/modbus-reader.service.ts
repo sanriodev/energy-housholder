@@ -55,7 +55,7 @@ export class ModbusReaderService {
     addresses: ModbusReadParams[],
   ): Promise<ModbusReadResult[]> {
     try {
-      let res: [{ key: string; readResult: ReadRegisterResult }] = [];
+      let res: ModbusReadResult[] = [];
       for (const address of addresses) {
         res.push({
           key: address.key,
