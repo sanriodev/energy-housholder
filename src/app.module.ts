@@ -6,7 +6,7 @@ import { MongoDatabaseProviderModule } from './config/database/mongo/provider/mo
 import { ModbusReaderModule } from './modules/modbus-reader/modbus-reader.module';
 
 @Module({
-  imports: [AppConfigModule, MongoDatabaseProviderModule, ModbusReaderModule],
+  imports: [AppConfigModule, MongoDatabaseProviderModule],
   controllers: [AppController],
   providers: [AppService],
 })

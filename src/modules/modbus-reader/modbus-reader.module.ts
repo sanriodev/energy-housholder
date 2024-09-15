@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { ModbusReaderService } from './modbus-reder.service';
+import { ModbusReaderService } from './modbus-reader.service';
 import { EnergyEntryModule } from '../energy-entry/energy-entry.module';
 
 @Module({
