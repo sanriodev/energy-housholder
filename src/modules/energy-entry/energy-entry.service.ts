@@ -1,4 +1,8 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import {
   EnergyEntry,
   EnergyEntryDocument,
@@ -7,10 +11,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, ObjectId } from 'mongoose';
 import { CreateEnergyEntryDto } from '../../dto/create-energy-entry.dto';
 import { UpdateEnergyEntryDto } from '../../dto/update-energy-entry.dto';
+import { ModbusReaderService } from '../modbus-reader/modbus-reader.service';
+import { Cron } from '@nestjs/schedule';
 
 @Injectable()
 export class EnergyEntryService {
   constructor(
+    @Inject(ModbusReaderService)
+    private readonly modbusReaderService: ModbusReaderService,
     @InjectModel(EnergyEntry.name)
     private readonly energyEntryModel: Model<EnergyEntryDocument>,
   ) {}
@@ -66,5 +74,22 @@ export class EnergyEntryService {
     } catch (error) {
       throw new UnprocessableEntityException(error);
     }
+  }
+
+  @Cron('0 */15 * * * *')
+  private async saveNewCronData(): Promise<EnergyEntryDocument[]> {
+    const data = await this.modbusReaderService.getModbusData();
+    const entries: EnergyEntryDocument[] = [];
+    for (const entry of data) {
+      entries.push(
+        await this.create({
+          batteryLevel: entry.readResult.data[0] * 100,
+          batteryPercent: entry.readResult.data[1] * 100 + '%',
+          batteryVoltage: entry.readResult.data[2] * 10 + ' V',
+          batteryStatus: entry.readResult.data[3]?.toString(),
+        }),
+      );
+    }
+    return entries;
   }
 }

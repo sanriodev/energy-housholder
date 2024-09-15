@@ -6,6 +6,7 @@ import {
   EnergyEntry,
   EnergyEntrySchema,
 } from '../../schemas/energy-entry.schema';
+import { ModbusReaderModule } from '../modbus-reader/modbus-reader.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import {
         schema: EnergyEntrySchema,
       },
     ]),
+    ModbusReaderModule,
   ], // Add any imported modules here
   controllers: [EnergyEntryController], // Add any controllers here
   providers: [EnergyEntryService],
